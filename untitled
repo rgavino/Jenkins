@@ -1,0 +1,83 @@
+
+
+PEM:		JenkinsServer.pem
+Public DNS:	ec2-54-187-188-134.us-west-2.compute.amazonaws.com
+
+chmod 600 ~/Downloads/AWS-Jenkins/CI-Servers/JenkinsServer.pem
+ssh -i ~/Downloads/AWS-Jenkins/CI-Servers/JenkinsServer.pem ubuntu@ec2-54-187-188-134.us-west-2.compute.amazonaws.com
+
+Host ec2JCI
+	Hostname		ec2-54-187-188-134.us-west-2.compute.amazonaws.com
+	User			ubuntu
+	IdentityFile	~/.ssh/JenkinsServer.pem
+
+mv ~/Downloads/AWS-Jenkins/CI-Servers/JenkinsServer.pem ~/.ssh
+cp ~/Downloads/AWS-Jenkins/CI-Servers/JenkinsServer.pem ~/.ssh
+
+ssh -i ~/.ssh/JenkinsServer.pem ubuntu@ec2-54-187-188-134.us-west-2.compute.amazonaws.com
+
+
+Continuous Integration with Jenkins on Amazon EC2
+=================================================
+
+## Initial Setup
+
+### Fixing Locales in Ubuntu 13.04 on Amazon EC2
+
+```bash
+sudo apt-get install language-pack-en
+```
+
+### Installing Jenkins
+
+```bash
+wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+echo "deb http://pkg.jenkins-ci.org/debian binary/" | sudo tee -a /etc/apt/sources.list.d/jenkins.list
+sudo apt-get update
+sudo apt-get install jenkins
+```
+RG:		sudo service jenkins restart
+RG:		ps -ef | grep jenkins
+
+
+
+## Installing and Configuring Apache
+
+### Installing Apache
+
+```bash
+sudo apt-get install apache2
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+```
+RG:    sudo service apache2 restart
+
+
+### `/etc/apache2/sites-available/jenkins.conf`
+```bash
+<VirtualHost *:80>
+	ServerName ec2-54-187-188-134.us-west-2.compute.amazonaws.com
+	ProxyRequests Off
+	<Proxy *>
+		Order deny,allow
+		Allow from all
+	</Proxy>
+	ProxyPreserveHost on
+	ProxyPass / http://localhost:8080/
+</VirtualHost>
+```
+
+### Enabling `jenkins.conf`
+
+```bash
+sudo a2ensite jenkins
+sudo service apache2 reload
+```
+
+## Installing Java / Maven / Git
+
+```bash
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer maven git-core
+```
