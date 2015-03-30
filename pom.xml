@@ -1,8 +1,9 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>ca.uwo.csd.cs2212.ronaldgavino</groupId>
-  <artifactId>ronaldgavino-lab5</artifactId>
+  <groupId>ca.uwo.csd.cs2212.USERNAME</groupId>
+  <artifactId>USERNAME-lab5</artifactId>
   <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
